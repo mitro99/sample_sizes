@@ -2,7 +2,8 @@ import streamlit as st
 from scipy import stats
 import numpy as np
 import matplotlib.pyplot as plt
-import cv2
+from PIL import Image
+import os
 
 def main():
     st.title("Sample Size Study Calculator")
@@ -12,8 +13,8 @@ def main():
     trial_type = st.selectbox("Select trial type", ["Non-inferiority trial", "Equality", "Superiority"])
 
     with st.expander("Get treatment failure rate from Tai, 2022 study"):
-        img = cv2.imread('ofac363f1.jpg')
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = Image.open(os.path.join(os.getcwd(), 'ofac363f1.jpg'))
+        img = np.array(img)
 
         col1_ex, col2_ex = st.columns(2)
         year = col1_ex.number_input("Study timepoint (years)", value = 1., step = 0.5, format = "%.1f")
