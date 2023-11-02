@@ -108,6 +108,8 @@ def get_sample_size_non_inf(p_reference, p_experimental, alpha, power, bound):
     beta = 1 - ratio_power
     zb = stats.norm.ppf(beta)
     za = stats.norm.ppf(1 - (alpha))
+    if (p_reference - p_experimental - bound) == 0:
+        return np.inf
     sample_size = ((za - zb)**2 * (p_reference * (1 - p_reference) + p_experimental * (1 - p_experimental))) / (p_reference - p_experimental - bound)**2
 
     return sample_size
@@ -120,6 +122,8 @@ def get_sample_size_equality(p_reference, p_experimental, alpha, power):
     beta = 1 - ratio_power
     zb = stats.norm.ppf(beta)
     za = stats.norm.ppf(1 - (alpha / 2))
+    if (p_reference - p_experimental) == 0:
+        return np.inf
     sample_size = ((za - zb)**2 * (p_reference * (1 - p_reference) + p_experimental * (1 - p_experimental))) / (p_reference - p_experimental)**2
 
     return sample_size
@@ -132,6 +136,8 @@ def get_sample_size_equality(p_reference, p_experimental, alpha, power, bound):
     beta = 1 - ratio_power
     zb = stats.norm.ppf(beta)
     za = stats.norm.ppf(1 - (alpha / 2))
+    if (p_reference - p_experimental - bound) == 0:
+        return np.inf
     sample_size = ((za - zb)**2 * (p_reference * (1 - p_reference) + p_experimental * (1 - p_experimental))) / (bound - np.abs(p_reference - p_experimental))**2
 
     return sample_size
