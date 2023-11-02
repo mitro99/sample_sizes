@@ -10,7 +10,7 @@ def main():
     st.write("Select the parameters for the study and the calculator will return the sample size required for the study.")
 
     # Add selection box for trial type
-    trial_type = st.selectbox("Select trial type", ["Non-inferiority trial", "Equality", "Superiority"])
+    trial_type = st.selectbox("Select trial type", ["Non-inferiority trial", "Equality", "Superiority", "Equivalence"])
 
     with st.expander("Get treatment failure rate from Tai, 2022 study"):
         img = Image.open(os.path.join(os.getcwd(), 'ofac363f1.jpg'))
@@ -67,7 +67,9 @@ def main():
     elif trial_type == "Equality":
         sample_size = get_sample_size_equality(reference_failure/100, experimental_failure/100, alpha, power)
     elif trial_type == "Superiority":
-        sample_size = get_sample_size_equality(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
+        sample_size = get_sample_size_non_inf(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
+    elif trial_type == "Equivalence":
+        sample_size = get_sample_size_equivalence(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
 
     st.markdown(f" ### Sample size per trial arm: **{round(sample_size)}**")
     st.subheader(f"Sample size total for both trial arms: **{round(sample_size * 2)}**")
@@ -109,8 +111,8 @@ def get_sample_size_non_inf(p_reference, p_experimental, alpha, power, bound):
     beta = 1 - ratio_power
     zb = stats.norm.ppf(beta)
     za = stats.norm.ppf(1 - (alpha))
-    if (p_reference - p_experimental - bound) == 0:
-        return np.inf
+    # if (p_reference - p_experimental - bound) == 0:
+    #     return np.inf
     sample_size = ((za - zb)**2 * (p_reference * (1 - p_reference) + p_experimental * (1 - p_experimental))) / (p_reference - p_experimental - bound)**2
 
     return sample_size
@@ -123,13 +125,13 @@ def get_sample_size_equality(p_reference, p_experimental, alpha, power):
     beta = 1 - ratio_power
     zb = stats.norm.ppf(beta)
     za = stats.norm.ppf(1 - (alpha / 2))
-    if (p_reference - p_experimental) == 0:
-        return np.inf
+    # if (p_reference - p_experimental) == 0:
+    #     return np.inf
     sample_size = ((za - zb)**2 * (p_reference * (1 - p_reference) + p_experimental * (1 - p_experimental))) / (p_reference - p_experimental)**2
 
     return sample_size
 
-def get_sample_size_equality(p_reference, p_experimental, alpha, power, bound):
+def get_sample_size_equivalence(p_reference, p_experimental, alpha, power, bound):
     '''
     Calculate the sample size for a given power, alpha, and bound
     '''
@@ -137,8 +139,8 @@ def get_sample_size_equality(p_reference, p_experimental, alpha, power, bound):
     beta = 1 - ratio_power
     zb = stats.norm.ppf(beta)
     za = stats.norm.ppf(1 - (alpha / 2))
-    if (p_reference - p_experimental - bound) == 0:
-        return np.inf
+    # if (p_reference - p_experimental - bound) == 0:
+    #     return np.inf
     sample_size = ((za - zb)**2 * (p_reference * (1 - p_reference) + p_experimental * (1 - p_experimental))) / (bound - np.abs(p_reference - p_experimental))**2
 
     return sample_size
