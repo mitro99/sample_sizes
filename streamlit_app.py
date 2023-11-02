@@ -94,7 +94,7 @@ def get_incidence(height_pixels:int) -> float:
     inc_values = {0:434, 10:349, 20:263, 30:178, 40:92}
     cal_pixels = [*inc_values.values()][::-1]
     cal_values = [*inc_values.keys()][::-1]
-    print(height_pixels)
+    # print(height_pixels)
 
     # get the incidence value from the image
     
