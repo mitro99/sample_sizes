@@ -67,7 +67,7 @@ def main():
     elif trial_type == "Equality":
         sample_size = get_sample_size_equality(reference_failure/100, experimental_failure/100, alpha, power)
     elif trial_type == "Superiority":
-        sample_size = get_sample_size_non_inf(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
+        sample_size = get_sample_size_sup(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
     elif trial_type == "Equivalence":
         sample_size = get_sample_size_equivalence(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
 
@@ -137,11 +137,25 @@ def get_sample_size_equivalence(p_reference, p_experimental, alpha, power, bound
     '''
     ratio_power = power / 100
     beta = 1 - ratio_power
+    zb = stats.norm.ppf(beta/2)
+    za = stats.norm.ppf(1 - (alpha))
+    # if (p_reference - p_experimental - bound) == 0:
+    #     return np.inf
+    sample_size = ((za - zb)**2 * (p_reference * (1 - p_reference) + p_experimental * (1 - p_experimental))) / (bound)**2
+
+    return sample_size
+
+def get_sample_size_sup(p_reference, p_experimental, alpha, power, bound):
+    '''
+    Calculate the sample size for a given power, alpha, and bound
+    '''
+    ratio_power = power / 100
+    beta = 1 - ratio_power
     zb = stats.norm.ppf(beta)
     za = stats.norm.ppf(1 - (alpha / 2))
     # if (p_reference - p_experimental - bound) == 0:
     #     return np.inf
-    sample_size = ((za - zb)**2 * (p_reference * (1 - p_reference) + p_experimental * (1 - p_experimental))) / (bound - np.abs(p_reference - p_experimental))**2
+    sample_size = ((za - zb)**2 * (p_reference * (1 - p_reference) + p_experimental * (1 - p_experimental))) / (p_reference - p_experimental)**2
 
     return sample_size
     
