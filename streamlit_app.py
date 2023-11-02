@@ -71,8 +71,8 @@ def main():
     elif trial_type == "Equivalence":
         sample_size = get_sample_size_equivalence(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
 
-    st.markdown(f" ### Sample size per trial arm: **{round(sample_size)}**")
-    st.subheader(f"Sample size total for both trial arms: **{round(sample_size * 2)}**")
+    st.markdown(f" ### Sample size per trial arm: **{np.ceil(sample_size)}**")
+    st.subheader(f"Sample size total for both trial arms: **{np.ceil(sample_size * 2)}**")
 
     st.markdown(f'''We assume that the **{year}** year treatment failure rates will be **{reference_failure} %** for the control group and **{experimental_failure} %** for the intervention group. We have set a one-sided significance level of **{alpha}** to test our null hypothesis and aim for a power of **{power} %** to detect that the treatment is truly not inferior to the control, based on a **{test_margin} %** margin. Given these parameters, we estimate that a total sample size of **{round(sample_size)}** patients will be required per arm to adequately power this study''')
 
