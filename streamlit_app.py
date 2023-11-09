@@ -33,6 +33,8 @@ def main():
         ax.plot(pixel_horz, pixel_vert, 'rx')
         ax.hlines(pixel_vert, zero_coords[0], pixel_horz, colors='r', alpha = 0.5)
         ax.vlines(pixel_horz, zero_coords[1], pixel_vert, colors='r', alpha = 0.5)
+        ax.set_xticks([])
+        ax.set_yticks([])
 
         # display figure in streamlit
         st.pyplot(study_img)
@@ -51,30 +53,30 @@ def main():
     col2.markdown(f'''Power: **{power} %** ''') # Display power with 3 decimal places
 
     st.subheader("Study Parameters")
-    # Add two columns for reference and experimental treatment failure rates
+    # Add two columns for reference and experimental treatment success rates
     col1, col2 = st.columns(2)
-    reference_failure = col1.number_input("Enter reference treatment failure rate (%)", value=50., step=1., format="%.2f")
-    col1.markdown(f'''Reference treatment failure rate: **{reference_failure:.2f} %** ''')
-    experimental_failure = col2.number_input("Enter experimental treatment failure rate (%)", value=50., step=1., format="%.2f")
-    col2.markdown(f'''Experimental treatment failure rate: **{experimental_failure:.2f} %** ''')
+    reference_success = col1.number_input("Enter reference treatment success rate (%)", value=50., step=1., format="%.2f")
+    col1.markdown(f'''Reference treatment success rate: **{reference_success:.2f} %** ''')
+    experimental_success = col2.number_input("Enter experimental treatment success rate (%)", value=50., step=1., format="%.2f")
+    col2.markdown(f'''Experimental treatment success rate: **{experimental_success:.2f} %** ''')
 
-    test_margin = col1.number_input("Enter test margin (failure rate difference)", value=10., step=1., format="%.2f")
+    test_margin = col1.number_input("Enter absolute non-inferiority limit", value=10., step=1., format="%.2f")
     col1.markdown(f'''Test margin: **{test_margin:.2f} %** ''')
 
     st.header("Sample Size Results")
     if trial_type == "Non-inferiority trial":
-        sample_size = get_sample_size_non_inf(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
+        sample_size = get_sample_size_non_inf(reference_success/100, experimental_success/100, alpha, power, test_margin/100)
     elif trial_type == "Equality":
-        sample_size = get_sample_size_equality(reference_failure/100, experimental_failure/100, alpha, power)
+        sample_size = get_sample_size_equality(reference_success/100, experimental_success/100, alpha, power)
     elif trial_type == "Superiority":
-        sample_size = get_sample_size_sup(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
+        sample_size = get_sample_size_sup(reference_success/100, experimental_success/100, alpha, power, test_margin/100)
     elif trial_type == "Equivalence":
-        sample_size = get_sample_size_equivalence(reference_failure/100, experimental_failure/100, alpha, power, test_margin/100)
+        sample_size = get_sample_size_equivalence(reference_success/100, experimental_success/100, alpha, power, test_margin/100)
 
     st.markdown(f" ### Sample size per trial arm: **{np.ceil(sample_size)}**")
-    st.subheader(f"Sample size total for both trial arms: **{np.ceil(sample_size * 2)}**")
+    st.subheader(f"Sample size total for both trial arms: **{np.ceil(sample_size) * 2}**")
 
-    st.markdown(f'''We assume that the **{year}** year treatment failure rates will be **{reference_failure} %** for the control group and **{experimental_failure} %** for the intervention group. We have set a one-sided significance level of **{alpha}** to test our null hypothesis and aim for a power of **{power} %** to detect that the treatment is truly not inferior to the control, based on a **{test_margin} %** margin. Given these parameters, we estimate that a total sample size of **{round(sample_size)}** patients will be required per arm to adequately power this study''')
+    st.markdown(f'''We assume that the **{year}** year treatment success rates will be **{reference_success} %** for the control group and **{experimental_success} %** for the intervention group. We have set a one-sided significance level of **{alpha}** to test our null hypothesis and aim for a power of **{power} %** to detect that the treatment is truly not inferior to the control, based on a **{test_margin} %** margin. Given these parameters, we estimate that a total sample size of **{round(sample_size)}** patients will be required per arm to adequately power this study''')
 
 
 def pixel_from_year(img:np.array, year:float) -> int:
